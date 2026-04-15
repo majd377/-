@@ -116,6 +116,31 @@
   <p class="footer-sub">dev by : Majd.sh &copy; 2026 </p>
 </footer>
 
+<footer><p class="footer-text">في رحاب الحق</p><p class="footer-sub">اللهم اجعل هذا العمل خالصاً لوجهك الكريم</p></footer>
+
+<!-- Install / Notifications banner -->
+<div id="installBanner" class="install-banner hidden" aria-hidden="true">
+  <div class="install-inner">
+    <div class="install-msg">تثبيت التطبيق على جهازك لتجربة أفضل</div>
+    <div class="install-actions">
+      <button id="installBtn" class="btn">تثبيت</button>
+      <button id="dismissInstall" class="btn muted">إغلاق</button>
+      <button id="enableNotif" class="btn notif">تفعيل الإشعارات</button>
+    </div>
+  </div>
+</div>
+
+<style>
+.install-banner{position:fixed;left:12px;right:12px;bottom:18px;background:#fff;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.18);padding:10px 12px;display:flex;align-items:center;justify-content:space-between;z-index:9999;font-family:inherit}
+.install-banner.hidden{display:none}
+.install-inner{display:flex;gap:12px;align-items:center;width:100%;justify-content:space-between}
+.install-msg{font-weight:600;color:#0b6623}
+.install-actions .btn{margin-left:6px;padding:8px 10px;border-radius:8px;border:0;background:#0b6623;color:#fff}
+.install-actions .btn.muted{background:#e9e9e9;color:#333}
+.install-actions .btn.notif{background:#f0a500;color:#fff}
+@media(min-width:720px){.install-banner{left:auto;right:28px;bottom:28px;width:420px}}
+</style>
+
 <script src="main.js"></script>
 </body>
 </html>
