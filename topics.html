@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>مواضيع دينية — في رحاب الحق</title>
+  <script>(function(){const t=localStorage.getItem('rahab_theme')||'light';document.documentElement.setAttribute('data-theme',t);})();</script>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0b6623">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;700;900&family=Scheherazade+New:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header id="mainHeader">
+  <a href="index.html" class="logo-link">
+    <img src="preview.webp" alt="رحاب الحق" class="logo-img">
+  </a>
+  <nav><ul>
+    <li><a href="index.html">الرئيسية</a></li>
+    <li><a href="quran.html">القرآن الكريم</a></li>
+    <li><a href="azkar.html">الأذكار</a></li>
+    <li><a href="duaa.html">الأدعية</a></li>
+    <li><a href="topics.html" class="active">مواضيع دينية</a></li>
+  </ul></nav>
+  <div class="header-left">
+    <button class="theme-toggle" aria-label="تغيير الوضع"></button>
+    <button class="menu-toggle">☰</button>
+  </div>
+</header>
+<section class="page-hero">
+  <h1>🕌 مواضيع دينية</h1>
+  <p>مقالات تغذي الروح وتنير العقل</p>
+</section>
+<section style="padding-top:10px;" id="topicsList"></section>
+
+<div class="modal-overlay" id="topicModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<footer><p class="footer-text">في رحاب الحق</p><p class="footer-sub">اللهم اجعل هذا العمل خالصاً لوجهك الكريم</p></footer>
+
+<!-- Install / Notifications banner -->
+<div id="installBanner" class="install-banner hidden" aria-hidden="true">
+  <div class="install-inner">
+    <div class="install-msg">تثبيت التطبيق على جهازك لتجربة أفضل</div>
+    <div class="install-actions">
+      <button id="installBtn" class="btn">تثبيت</button>
+      <button id="dismissInstall" class="btn muted">إغلاق</button>
+      <button id="enableNotif" class="btn notif">تفعيل الإشعارات</button>
+    </div>
+  </div>
+</div>
+
+<style>
+.install-banner{position:fixed;left:12px;right:12px;bottom:18px;background:#fff;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.18);padding:10px 12px;display:flex;align-items:center;justify-content:space-between;z-index:9999;font-family:inherit}
+.install-banner.hidden{display:none}
+.install-inner{display:flex;gap:12px;align-items:center;width:100%;justify-content:space-between}
+.install-msg{font-weight:600;color:#0b6623}
+.install-actions .btn{margin-left:6px;padding:8px 10px;border-radius:8px;border:0;background:#0b6623;color:#fff}
+.install-actions .btn.muted{background:#e9e9e9;color:#333}
+.install-actions .btn.notif{background:#f0a500;color:#fff}
+@media(min-width:720px){.install-banner{left:auto;right:28px;bottom:28px;width:420px}}
+</style>
+<script src="main.js"></script>
+<script>
+const TOPICS=[
+  {icon:"💚",tag:"أخلاق إسلامية",title:"العفو والتسامح في الإسلام",summary:"العفو من أعلى مراتب الأخلاق، وقد أثنى عليه القرآن وحثّ عليه النبي ﷺ في مواضع كثيرة...",
+  content:`<h2>💚 العفو والتسامح في الإسلام</h2>
+    <p>العفو والتسامح من أرقى الخصال التي دعا إليها الإسلام، وقد أشاد بهما القرآن الكريم في مواضع كثيرة.</p>
+    <p style="font-family:'Scheherazade New',serif;font-size:1.4rem;color:var(--green);line-height:2">﴿ وَلْيَعْفُوا وَلْيَصْفَحُوا ۗ أَلَا تُحِبُّونَ أَن يَغْفِرَ اللَّهُ لَكُمْ ﴾</p>
+    <p style="color:var(--gold);font-size:0.88rem">النور: ٢٢</p>
+    <p>قال النبي ﷺ: "ما نقصت صدقة من مال، وما زاد الله عبدًا بعفو إلا عزًّا."</p>
+    <p>العفو لا يعني الضعف بل هو قوة حقيقية تُظهر سمو النفس. ومن أعظم نماذجه: عفو النبي ﷺ عن أهل مكة يوم الفتح.</p>`
+  },
+  {icon:"🌟",tag:"تزكية النفس",title:"الصبر وحسن الظن بالله",summary:"الصبر نصف الإيمان، وحسن الظن بالله من أعظم العبادات في أوقات الابتلاء...",
+  content:`<h2>🌟 الصبر وحسن الظن بالله</h2>
+    <p style="font-family:'Scheherazade New',serif;font-size:1.4rem;color:var(--green);line-height:2">﴿ إِنَّمَا يُوَفَّى الصَّابِرُونَ أَجْرَهُم بِغَيْرِ حِسَابٍ ﴾</p>
+    <p style="color:var(--gold);font-size:0.88rem">الزمر: ١٠</p>
+    <p>الصبر ثلاثة أنواع: صبر على طاعة الله، وصبر عن معصيته، وصبر على أقداره المؤلمة.</p>
+    <p>وحسن الظن بالله يعني اليقين بأن ما أصابك لم يكن ليُخطئك، وأن الله اختار لك خيرًا مما اخترت لنفسك.</p>
+    <p>قال ﷺ في الحديث القدسي: "أنا عند ظن عبدي بي، فليظن بي ما شاء."</p>`
+  },
+  {icon:"🤝",tag:"معاملات",title:"حقوق الجار في الإسلام",summary:"أولى الإسلام الجار اهتمامًا بالغًا حتى قال النبي ﷺ ظن أن الجار سيرث الجار...",
+  content:`<h2>🤝 حقوق الجار في الإسلام</h2>
+    <p>قال ﷺ: "مَا زَالَ جِبْرِيلُ يُوصِينِي بِالْجَارِ حَتَّى ظَنَنْتُ أَنَّهُ سَيُوَرِّثُهُ." — متفق عليه</p>
+    <p style="font-family:'Scheherazade New',serif;font-size:1.4rem;color:var(--green);line-height:2">﴿ وَالْجَارِ ذِي الْقُرْبَىٰ وَالْجَارِ الْجُنُبِ وَالصَّاحِبِ بِالْجَنبِ ﴾</p>
+    <p style="color:var(--gold);font-size:0.88rem">النساء: ٣٦</p>
+    <p>حقوق الجار: ردّ السلام، عيادته إن مرض، مواساته إن أصابه مكروه، وأن لا يؤذيه.</p>`
+  },
+  {icon:"📚",tag:"علم وتعلم",title:"فضل طلب العلم في الإسلام",summary:"العلم فريضة على كل مسلم، ومن سلك طريقًا يلتمس فيه علمًا سهّل الله له طريقًا إلى الجنة...",
+  content:`<h2>📚 فضل طلب العلم</h2>
+    <p style="font-family:'Scheherazade New',serif;font-size:1.4rem;color:var(--green);line-height:2">﴿ اقْرَأْ بِاسْمِ رَبِّكَ الَّذِي خَلَقَ ﴾</p>
+    <p style="color:var(--gold);font-size:0.88rem">العلق: ١ — أول ما نزل من القرآن</p>
+    <p>قال ﷺ: "من سلك طريقًا يلتمس فيه علمًا، سهّل الله له به طريقًا إلى الجنة." — رواه مسلم</p>
+    <p>العلم النافع هو الذي يزيد صاحبه خشيةً لله ويدفعه إلى العمل الصالح.</p>`
+  },
+  {icon:"🌙",tag:"عبادات",title:"فضائل قيام الليل",summary:"قيام الليل من أعظم القربات، وفيه يتنزل الله تعالى إلى السماء الدنيا...",
+  content:`<h2>🌙 فضائل قيام الليل</h2>
+    <p style="font-family:'Scheherazade New',serif;font-size:1.4rem;color:var(--green);line-height:2">﴿ وَمِنَ اللَّيْلِ فَتَهَجَّدْ بِهِ نَافِلَةً لَّكَ عَسَىٰ أَن يَبْعَثَكَ رَبُّكَ مَقَامًا مَّحْمُودًا ﴾</p>
+    <p style="color:var(--gold);font-size:0.88rem">الإسراء: ٧٩</p>
+    <p>في الثلث الأخير ينزل ربنا فيقول: "من يدعوني فأستجيب له؟ من يستغفرني فأغفر له؟"</p>
+    <p>ابدأ بركعتين كل ليلة وداوم عليهما، فأحب الأعمال إلى الله أدومها وإن قلّ.</p>`
+  },
+  {icon:"❤️",tag:"أسرة ومجتمع",title:"بر الوالدين وعظم منزلته",summary:"جاء ذكر الوالدين قريناً لعبادة الله في القرآن، مما يدل على عظم هذا الحق...",
+  content:`<h2>❤️ بر الوالدين</h2>
+    <p style="font-family:'Scheherazade New',serif;font-size:1.4rem;color:var(--green);line-height:2">﴿ وَقَضَىٰ رَبُّكَ أَلَّا تَعْبُدُوا إِلَّا إِيَّاهُ وَبِالْوَالِدَيْنِ إِحْسَانًا ﴾</p>
+    <p style="color:var(--gold);font-size:0.88rem">الإسراء: ٢٣</p>
+    <p>أيّ العمل أحبّ إلى الله؟ قال ﷺ: "الصلاة على وقتها." قيل: ثم؟ قال: "بر الوالدين." — متفق عليه</p>
+    <p>بر الوالدين لا ينقطع بوفاتهما بل يمتد: الدعاء لهما، والصدقة عنهما، وصلة أرحامهما.</p>`
+  }
+];
+function openTopic(i){
+  document.getElementById('modalContent').innerHTML=TOPICS[i].content;
+  document.getElementById('topicModal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeModal(){
+  document.getElementById('topicModal').classList.remove('open');
+  document.body.style.overflow='';
+}
+document.getElementById('topicModal').addEventListener('click',e=>{if(e.target===document.getElementById('topicModal'))closeModal();});
+document.addEventListener('DOMContentLoaded',()=>{
+  let html='';
+  TOPICS.forEach((t,i)=>{
+    html+=`<div class="topic-card" onclick="openTopic(${i})">
+      <span class="topic-tag">${t.icon} ${t.tag}</span>
+      <h3>${t.title}</h3>
+      <p>${t.summary}</p>
+      <span style="color:var(--gold);font-size:0.88rem;margin-top:8px;display:inline-block">اقرأ المزيد ←</span>
+    </div>`;
+  });
+  document.getElementById('topicsList').innerHTML=html;
+});
+</script>
+</body>
+</html>

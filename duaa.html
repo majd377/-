@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>الأدعية — في رحاب الحق</title>
+  <script>(function(){const t=localStorage.getItem('rahab_theme')||'light';document.documentElement.setAttribute('data-theme',t);})();</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;700;900&family=Scheherazade+New:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header id="mainHeader">
+  <a href="index.html" class="logo-link">
+    <img src="preview.webp" alt="رحاب الحق" class="logo-img">
+  </a>
+  <nav><ul>
+    <li><a href="index.html">الرئيسية</a></li>
+    <li><a href="quran.html">القرآن الكريم</a></li>
+    <li><a href="azkar.html">الأذكار</a></li>
+    <li><a href="duaa.html" class="active">الأدعية</a></li>
+    <li><a href="topics.html">مواضيع دينية</a></li>
+  </ul></nav>
+  <div class="header-left">
+    <button class="theme-toggle" aria-label="تغيير الوضع"></button>
+    <button class="menu-toggle">☰</button>
+  </div>
+</header>
+<section class="page-hero">
+  <h1>🤲 الأدعية المستحبة</h1>
+  <p>ادعُ ربك بهذه الأدعية المأثورة</p>
+</section>
+<section style="padding-top:0;">
+  <div class="azkar-tabs">
+    <button class="tab-btn active" onclick="showDuaa('salah',this)">🕌 الصلاة</button>
+    <button class="tab-btn" onclick="showDuaa('food',this)">🍽️ الطعام</button>
+    <button class="tab-btn" onclick="showDuaa('travel',this)">✈️ السفر</button>
+    <button class="tab-btn" onclick="showDuaa('hardship',this)">💪 الكرب</button>
+    <button class="tab-btn" onclick="showDuaa('quran',this)">📖 القرآن</button>
+    <button class="tab-btn" onclick="showDuaa('general',this)">⭐ جامعة</button>
+  </div>
+  <div id="duaaContent"></div>
+</section>
+<footer><p class="footer-text">في رحاب الحق</p><p class="footer-sub">اللهم اجعل هذا العمل خالصاً لوجهك الكريم</p></footer>
+<script src="main.js"></script>
+<script>
+const DUAA={
+  salah:[
+    {title:"دعاء الاستفتاح",text:"اللَّهُمَّ بَاعِدْ بَيْنِي وَبَيْنَ خَطَايَايَ كَمَا بَاعَدْتَ بَيْنَ الْمَشْرِقِ وَالْمَغْرِبِ، اللَّهُمَّ نَقِّنِي مِنَ الْخَطَايَا كَمَا يُنَقَّى الثَّوْبُ الأَبْيَضُ مِنَ الدَّنَسِ، اللَّهُمَّ اغْسِلْ خَطَايَايَ بِالْمَاءِ وَالثَّلْجِ وَالْبَرَدِ",source:"رواه البخاري ومسلم"},
+    {title:"دعاء القنوت",text:"اللَّهُمَّ اهْدِنِي فِيمَنْ هَدَيْتَ، وَعَافِنِي فِيمَنْ عَافَيْتَ، وَتَوَلَّنِي فِيمَنْ تَوَلَّيْتَ، وَبَارِكْ لِي فِيمَا أَعْطَيْتَ، وَقِنِي شَرَّ مَا قَضَيْتَ، فَإِنَّكَ تَقْضِي وَلَا يُقْضَى عَلَيْكَ",source:"رواه أبو داود والترمذي"},
+    {title:"دعاء بعد التشهد",text:"اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنْ عَذَابِ جَهَنَّمَ، وَمِنْ عَذَابِ الْقَبْرِ، وَمِنْ فِتْنَةِ الْمَحْيَا وَالْمَمَاتِ، وَمِنْ شَرِّ فِتْنَةِ الْمَسِيحِ الدَّجَّالِ",source:"رواه البخاري ومسلم"}
+  ],
+  food:[
+    {title:"دعاء قبل الطعام",text:"بِسْمِ اللَّهِ",source:"رواه أبو داود"},
+    {title:"إذا نسي التسمية",text:"بِسْمِ اللَّهِ فِي أَوَّلِهِ وَآخِرِهِ",source:"رواه أبو داود والترمذي"},
+    {title:"دعاء بعد الطعام",text:"الْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنِي هَذَا وَرَزَقَنِيهِ مِنْ غَيْرِ حَوْلٍ مِنِّي وَلَا قُوَّةٍ",source:"رواه الترمذي"},
+    {title:"الدعاء لصاحب الطعام",text:"اللَّهُمَّ بَارِكْ لَهُمْ فِيمَا رَزَقْتَهُمْ وَاغْفِرْ لَهُمْ وَارْحَمْهُمْ",source:"رواه مسلم"}
+  ],
+  travel:[
+    {title:"دعاء الركوب",text:"بِسْمِ اللَّهِ، الْحَمْدُ لِلَّهِ، سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ، وَإِنَّا إِلَى رَبِّنَا لَمُنقَلِبُونَ",source:"رواه مسلم"},
+    {title:"دعاء السفر",text:"اللَّهُمَّ أَنْتَ الصَّاحِبُ فِي السَّفَرِ، وَالْخَلِيفَةُ فِي الأَهْلِ، اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنْ وَعْثَاءِ السَّفَرِ وَكَآبَةِ الْمَنْظَرِ",source:"رواه مسلم"},
+    {title:"دعاء العودة",text:"آيِبُونَ تَائِبُونَ عَابِدُونَ لِرَبِّنَا حَامِدُونَ",source:"رواه البخاري ومسلم"}
+  ],
+  hardship:[
+    {title:"دعاء الكرب",text:"لاَ إِلَهَ إِلاَّ اللَّهُ الْعَظِيمُ الْحَلِيمُ، لاَ إِلَهَ إِلاَّ اللَّهُ رَبُّ الْعَرْشِ الْعَظِيمِ، لاَ إِلَهَ إِلاَّ اللَّهُ رَبُّ السَّمَاوَاتِ وَرَبُّ الأَرْضِ وَرَبُّ الْعَرْشِ الْكَرِيمِ",source:"رواه البخاري ومسلم"},
+    {title:"دعاء الهم والحزن",text:"اللَّهُمَّ إِنِّي عَبْدُكَ ابْنُ عَبْدِكَ ابْنُ أَمَتِكَ، نَاصِيَتِي بِيَدِكَ، مَاضٍ فِيَّ حُكْمُكَ، عَدْلٌ فِيَّ قَضَاؤُكَ، أَسْأَلُكَ بِكُلِّ اسْمٍ هُوَ لَكَ أَنْ تَجْعَلَ الْقُرْآنَ رَبِيعَ قَلْبِي",source:"رواه أحمد"},
+    {title:"دعاء يونس ﷺ",text:"لَّا إِلَهَ إِلَّا أَنتَ سُبْحَانَكَ إِنِّي كُنتُ مِنَ الظَّالِمِينَ",source:"الأنبياء: ٨٧ — من دعا بها استجاب الله له"}
+  ],
+  quran:[
+    {title:"قبل قراءة القرآن",text:"أَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّجِيمِ",source:"النحل: ٩٨"},
+    {title:"دعاء ختم القرآن",text:"اللَّهُمَّ ارْحَمْنِي بِالْقُرْآنِ، وَاجْعَلْهُ لِي إِمَامًا وَنُورًا وَهُدًى وَرَحْمَةً",source:"ورد عن السلف"},
+    {title:"طلب الفهم والعلم",text:"رَبِّ زِدْنِي عِلْمًا، وَارْزُقْنِي فَهْمَهُ",source:"طه: ١١٤"}
+  ],
+  general:[
+    {title:"أجمع دعاء",text:"رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ",source:"البقرة: ٢٠١"},
+    {title:"دعاء الاستخارة",text:"اللَّهُمَّ إِنِّي أَسْتَخِيرُكَ بِعِلْمِكَ وَأَسْتَقْدِرُكَ بِقُدْرَتِكَ وَأَسْأَلُكَ مِنْ فَضْلِكَ الْعَظِيمِ فَإِنَّكَ تَقْدِرُ وَلاَ أَقْدِرُ وَتَعْلَمُ وَلاَ أَعْلَمُ وَأَنْتَ عَلاَّمُ الْغُيُوبِ",source:"رواه البخاري"},
+    {title:"الثبات على الدين",text:"يَا مُقَلِّبَ الْقُلُوبِ ثَبِّتْ قَلْبِي عَلَى دِينِكَ",source:"رواه الترمذي"},
+    {title:"حسن الخاتمة",text:"اللَّهُمَّ اجْعَلْ خَيْرَ عُمُرِي آخِرَهُ، وَخَيْرَ عَمَلِي خَوَاتِيمَهُ، وَخَيْرَ أَيَّامِي يَوْمَ أَلْقَاكَ",source:"رواه الطبراني"}
+  ]
+};
+function showDuaa(cat,btn){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  let html='';
+  DUAA[cat].forEach(d=>{
+    html+=`<div class="topic-card">
+      <span class="topic-tag">📚 ${d.source}</span>
+      <h3>${d.title}</h3>
+      <p style="font-family:'Scheherazade New',serif;font-size:1.4rem;line-height:2.2;color:var(--text);margin-top:10px">${d.text}</p>
+    </div>`;
+  });
+  document.getElementById('duaaContent').innerHTML=html;
+}
+document.addEventListener('DOMContentLoaded',()=>showDuaa('salah',document.querySelector('.tab-btn')));
+</script>
+</body>
+</html>

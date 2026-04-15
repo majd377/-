@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>القرآن الكريم — في رحاب الحق</title>
+  <script>(function(){const t=localStorage.getItem('rahab_theme')||'light';document.documentElement.setAttribute('data-theme',t);})();</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;700;900&family=Scheherazade+New:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header id="mainHeader">
+  <a href="index.html" class="logo-link">
+    <img src="preview.webp" alt="رحاب الحق" class="logo-img">
+  </a>
+  <nav><ul>
+    <li><a href="index.html">الرئيسية</a></li>
+    <li><a href="quran.html" class="active">القرآن الكريم</a></li>
+    <li><a href="azkar.html">الأذكار</a></li>
+    <li><a href="duaa.html">الأدعية</a></li>
+    <li><a href="topics.html">مواضيع دينية</a></li>
+  </ul></nav>
+  <div class="header-left">
+    <button class="theme-toggle" aria-label="تغيير الوضع"></button>
+    <button class="menu-toggle">☰</button>
+  </div>
+</header>
+
+<section class="page-hero">
+  <h1>📖 القرآن الكريم</h1>
+  <p>اقرأ، تدبّر — موضعك يُحفظ تلقائياً</p>
+</section>
+
+<section style="padding-top:10px;" id="quranMain">
+  <div class="spinner"></div>
+</section>
+
+<footer>
+  <p class="footer-text">في رحاب الحق</p>
+  <p class="footer-sub">اللهم اجعل هذا العمل خالصاً لوجهك الكريم</p>
+</footer>
+
+<script src="main.js"></script>
+<script>
+// =============================================
+//  QURAN DATA
+// =============================================
+const LOGO = 'https://claude.ai/api/1377ff21-2391-4cf8-ae96-8420ab279142/files/019d90b5-a2c1-73cb-9e30-2eebabe95e91/preview';
+
+const SUAR = [
+  {n:"الفاتحة",a:7,j:1,r:"مكية"},  {n:"البقرة",a:286,j:1,r:"مدنية"}, {n:"آل عمران",a:200,j:3,r:"مدنية"},
+  {n:"النساء",a:176,j:4,r:"مدنية"},{n:"المائدة",a:120,j:6,r:"مدنية"},{n:"الأنعام",a:165,j:7,r:"مكية"},
+  {n:"الأعراف",a:206,j:8,r:"مكية"},{n:"الأنفال",a:75,j:9,r:"مدنية"},{n:"التوبة",a:129,j:10,r:"مدنية"},
+  {n:"يونس",a:109,j:11,r:"مكية"},  {n:"هود",a:123,j:11,r:"مكية"},   {n:"يوسف",a:111,j:12,r:"مكية"},
+  {n:"الرعد",a:43,j:13,r:"مدنية"}, {n:"إبراهيم",a:52,j:13,r:"مكية"},{n:"الحجر",a:99,j:14,r:"مكية"},
+  {n:"النحل",a:128,j:14,r:"مكية"}, {n:"الإسراء",a:111,j:15,r:"مكية"},{n:"الكهف",a:110,j:15,r:"مكية"},
+  {n:"مريم",a:98,j:16,r:"مكية"},   {n:"طه",a:135,j:16,r:"مكية"},    {n:"الأنبياء",a:112,j:17,r:"مكية"},
+  {n:"الحج",a:78,j:17,r:"مدنية"},  {n:"المؤمنون",a:118,j:18,r:"مكية"},{n:"النور",a:64,j:18,r:"مدنية"},
+  {n:"الفرقان",a:77,j:18,r:"مكية"},{n:"الشعراء",a:227,j:19,r:"مكية"},{n:"النمل",a:93,j:19,r:"مكية"},
+  {n:"القصص",a:88,j:20,r:"مكية"},  {n:"العنكبوت",a:69,j:20,r:"مكية"},{n:"الروم",a:60,j:21,r:"مكية"},
+  {n:"لقمان",a:34,j:21,r:"مكية"},  {n:"السجدة",a:30,j:21,r:"مكية"}, {n:"الأحزاب",a:73,j:21,r:"مدنية"},
+  {n:"سبأ",a:54,j:22,r:"مكية"},    {n:"فاطر",a:45,j:22,r:"مكية"},   {n:"يس",a:83,j:22,r:"مكية"},
+  {n:"الصافات",a:182,j:23,r:"مكية"},{n:"ص",a:88,j:23,r:"مكية"},     {n:"الزمر",a:75,j:23,r:"مكية"},
+  {n:"غافر",a:85,j:24,r:"مكية"},   {n:"فصلت",a:54,j:24,r:"مكية"},   {n:"الشورى",a:53,j:25,r:"مكية"},
+  {n:"الزخرف",a:89,j:25,r:"مكية"}, {n:"الدخان",a:59,j:25,r:"مكية"}, {n:"الجاثية",a:37,j:25,r:"مكية"},
+  {n:"الأحقاف",a:35,j:26,r:"مكية"},{n:"محمد",a:38,j:26,r:"مدنية"},  {n:"الفتح",a:29,j:26,r:"مدنية"},
+  {n:"الحجرات",a:18,j:26,r:"مدنية"},{n:"ق",a:45,j:26,r:"مكية"},     {n:"الذاريات",a:60,j:27,r:"مكية"},
+  {n:"الطور",a:49,j:27,r:"مكية"},  {n:"النجم",a:62,j:27,r:"مكية"},  {n:"القمر",a:55,j:27,r:"مكية"},
+  {n:"الرحمن",a:78,j:27,r:"مدنية"},{n:"الواقعة",a:96,j:27,r:"مكية"},{n:"الحديد",a:29,j:27,r:"مدنية"},
+  {n:"المجادلة",a:22,j:28,r:"مدنية"},{n:"الحشر",a:24,j:28,r:"مدنية"},{n:"الممتحنة",a:13,j:28,r:"مدنية"},
+  {n:"الصف",a:14,j:28,r:"مدنية"},  {n:"الجمعة",a:11,j:28,r:"مدنية"},{n:"المنافقون",a:11,j:28,r:"مدنية"},
+  {n:"التغابن",a:18,j:28,r:"مدنية"},{n:"الطلاق",a:12,j:28,r:"مدنية"},{n:"التحريم",a:12,j:28,r:"مدنية"},
+  {n:"الملك",a:30,j:29,r:"مكية"},  {n:"القلم",a:52,j:29,r:"مكية"},  {n:"الحاقة",a:52,j:29,r:"مكية"},
+  {n:"المعارج",a:44,j:29,r:"مكية"},{n:"نوح",a:28,j:29,r:"مكية"},    {n:"الجن",a:28,j:29,r:"مكية"},
+  {n:"المزمل",a:20,j:29,r:"مكية"}, {n:"المدثر",a:56,j:29,r:"مكية"}, {n:"القيامة",a:40,j:29,r:"مكية"},
+  {n:"الإنسان",a:31,j:29,r:"مدنية"},{n:"المرسلات",a:50,j:29,r:"مكية"},{n:"النبأ",a:40,j:30,r:"مكية"},
+  {n:"النازعات",a:46,j:30,r:"مكية"},{n:"عبس",a:42,j:30,r:"مكية"},   {n:"التكوير",a:29,j:30,r:"مكية"},
+  {n:"الانفطار",a:19,j:30,r:"مكية"},{n:"المطففين",a:36,j:30,r:"مكية"},{n:"الانشقاق",a:25,j:30,r:"مكية"},
+  {n:"البروج",a:22,j:30,r:"مكية"}, {n:"الطارق",a:17,j:30,r:"مكية"}, {n:"الأعلى",a:19,j:30,r:"مكية"},
+  {n:"الغاشية",a:26,j:30,r:"مكية"},{n:"الفجر",a:30,j:30,r:"مكية"},  {n:"البلد",a:20,j:30,r:"مكية"},
+  {n:"الشمس",a:15,j:30,r:"مكية"},  {n:"الليل",a:21,j:30,r:"مكية"},  {n:"الضحى",a:11,j:30,r:"مكية"},
+  {n:"الشرح",a:8,j:30,r:"مكية"},   {n:"التين",a:8,j:30,r:"مكية"},   {n:"العلق",a:19,j:30,r:"مكية"},
+  {n:"القدر",a:5,j:30,r:"مكية"},   {n:"البينة",a:8,j:30,r:"مدنية"}, {n:"الزلزلة",a:8,j:30,r:"مدنية"},
+  {n:"العاديات",a:11,j:30,r:"مكية"},{n:"القارعة",a:11,j:30,r:"مكية"},{n:"التكاثر",a:8,j:30,r:"مكية"},
+  {n:"العصر",a:3,j:30,r:"مكية"},   {n:"الهمزة",a:9,j:30,r:"مكية"},  {n:"الفيل",a:5,j:30,r:"مكية"},
+  {n:"قريش",a:4,j:30,r:"مكية"},    {n:"الماعون",a:7,j:30,r:"مكية"}, {n:"الكوثر",a:3,j:30,r:"مكية"},
+  {n:"الكافرون",a:6,j:30,r:"مكية"},{n:"النصر",a:3,j:30,r:"مدنية"},  {n:"المسد",a:5,j:30,r:"مكية"},
+  {n:"الإخلاص",a:4,j:30,r:"مكية"},{n:"الفلق",a:5,j:30,r:"مكية"},   {n:"الناس",a:6,j:30,r:"مكية"}
+];
+
+// Juz start info (surah, ayah)
+const JUZ_START = [
+  [1,1],[2,142],[2,253],[3,93],[4,24],[4,148],[5,82],[6,111],[7,88],[8,41],
+  [9,93],[11,6],[12,53],[15,1],[17,1],[18,75],[21,1],[23,1],[25,21],[27,56],
+  [29,46],[33,31],[36,28],[39,32],[41,47],[46,1],[51,31],[58,1],[67,1],[78,1]
+];
+
+const JUZ_NAMES = Array.from({length:30},(_,i)=>`الجزء ${toArabicNum(i+1)}`);
+
+function toArabicNum(n){
+  return n.toString().replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);
+}
+
+// =============================================
+//  BOOKMARK  (auto-saved)
+// =============================================
+function getBookmark(){
+  try { return JSON.parse(localStorage.getItem('q_bm')); } catch{ return null; }
+}
+function saveBookmark(surah, ayah){
+  localStorage.setItem('q_bm', JSON.stringify({surah, ayah, name: SUAR[surah-1].n, ts: Date.now()}));
+}
+
+// =============================================
+//  INTERSECTION OBSERVER  — auto bookmark
+// =============================================
+let bmObserver = null;
+let bmDebounce = null;
+
+function setupAutoBookmark(surahNum) {
+  if (bmObserver) bmObserver.disconnect();
+  const items = document.querySelectorAll('.ayah-item[data-ayah]');
+  bmObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const ayahNum = parseInt(entry.target.dataset.ayah);
+        clearTimeout(bmDebounce);
+        bmDebounce = setTimeout(() => {
+          saveBookmark(surahNum, ayahNum);
+          // subtle visual indicator
+          document.querySelectorAll('.ayah-item.auto-bookmarked').forEach(el => {
+            el.classList.remove('auto-bookmarked');
+            const lbl = el.querySelector('.auto-bm-label');
+            if (lbl) lbl.remove();
+          });
+          entry.target.classList.add('auto-bookmarked');
+          if (!entry.target.querySelector('.auto-bm-label')) {
+            const lbl = document.createElement('span');
+            lbl.className = 'auto-bm-label';
+            lbl.textContent = '🔖 موضعك';
+            entry.target.appendChild(lbl);
+          }
+        }, 800);
+      }
+    });
+  }, { threshold: 0.6, rootMargin: '-20% 0px -20% 0px' });
+
+  items.forEach(el => bmObserver.observe(el));
+}
+
+// =============================================
+//  MAIN AREA
+// =============================================
+const main = document.getElementById('quranMain');
+let currentView = 'surah'; // 'surah' | 'juz'
+let searchQ = '';
+
+// ── Surah List ──
+function showSurahList() {
+  currentView = 'surah';
+  const bm = getBookmark();
+  let html = `<div class="quran-controls">
+    <input id="qSearch" class="q-search" type="text" placeholder="🔍 ابحث عن سورة..." value="${searchQ}">
+    <div class="view-tabs">
+      <button class="view-btn active" onclick="showSurahList()">📋 السور</button>
+      <button class="view-btn" onclick="showJuzList()">📑 الأجزاء</button>
+    </div>
+  </div>`;
+
+  if (bm) {
+    html += `<div class="bookmark-banner" onclick="showSurah(${bm.surah},${bm.ayah})">
+      <span style="font-size:1.5rem">🔖</span>
+      <div><strong>استكمل من حيث توقفت</strong><br>
+      <span>سورة ${bm.name} — الآية ${toArabicNum(bm.ayah)}</span></div>
+      <span style="margin-right:auto;color:var(--gold);font-size:1.1rem">←</span>
+    </div>`;
+  }
+
+  html += `<div class="suar-grid" id="suarGrid">`;
+  SUAR.forEach((s,i) => {
+    const num = i+1;
+    const hasBm = bm && bm.surah === num;
+    html += `<div class="surah-card" onclick="showSurah(${num})">
+      <div class="surah-num">${toArabicNum(num)}</div>
+      <div class="surah-info">
+        <span class="surah-name">${s.n}</span>
+        <span class="surah-meta">${toArabicNum(s.a)} آية &nbsp;·&nbsp; ${s.r}</span>
+      </div>
+      ${hasBm ? '<div class="surah-bookmark-dot"></div>' : ''}
+    </div>`;
+  });
+  html += `</div>`;
+  main.innerHTML = html;
+
+  // search
+  document.getElementById('qSearch').addEventListener('input', function(){
+    searchQ = this.value.trim();
+    document.querySelectorAll('.surah-card').forEach(c => {
+      c.style.display = (!searchQ || c.querySelector('.surah-name').textContent.includes(searchQ)) ? '' : 'none';
+    });
+  });
+}
+
+// ── Juz List ──
+function showJuzList() {
+  currentView = 'juz';
+  const bm = getBookmark();
+  let html = `<div class="quran-controls">
+    <input id="qSearch" class="q-search" type="text" placeholder="🔍 ابحث عن سورة..." value="${searchQ}">
+    <div class="view-tabs">
+      <button class="view-btn" onclick="showSurahList()">📋 السور</button>
+      <button class="view-btn active" onclick="showJuzList()">📑 الأجزاء</button>
+    </div>
+  </div>`;
+
+  if (bm) {
+    html += `<div class="bookmark-banner" onclick="showSurah(${bm.surah},${bm.ayah})">
+      <span style="font-size:1.5rem">🔖</span>
+      <div><strong>استكمل من حيث توقفت</strong><br>
+      <span>سورة ${bm.name} — الآية ${toArabicNum(bm.ayah)}</span></div>
+      <span style="margin-right:auto;color:var(--gold);font-size:1.1rem">←</span>
+    </div>`;
+  }
+
+  html += `<div class="juz-grid">`;
+  for (let j=1; j<=30; j++) {
+    const [s,a] = JUZ_START[j-1];
+    html += `<div class="juz-card" onclick="showJuz(${j})">
+      <div class="juz-num">${toArabicNum(j)}</div>
+      <div class="juz-label">الجزء ${toArabicNum(j)}</div>
+      <div style="font-size:0.75rem;color:var(--text3);margin-top:4px">${SUAR[s-1].n}</div>
+    </div>`;
+  }
+  html += `</div>`;
+  main.innerHTML = html;
+}
+
+// ── Show Juz (show surah list filtered) ──
+async function showJuz(juzNum) {
+  const [startSurah] = JUZ_START[juzNum-1];
+  const endSurah = juzNum < 30 ? JUZ_START[juzNum][0] : 114;
+
+  main.innerHTML = `<div class="spinner"></div>`;
+  // Load all surahs in this juz and display together
+  const surahs = [];
+  for (let s = startSurah; s <= endSurah; s++) {
+    if (SUAR[s-1].j === juzNum || s === startSurah) surahs.push(s);
+  }
+
+  let html = `<div class="surah-nav" style="margin-bottom:24px;">
+    <button class="nav-btn" onclick="showJuzList()">← الأجزاء</button>
+    <span class="surah-title-display">الجزء ${toArabicNum(juzNum)}</span>
+    <div style="display:flex;gap:8px">
+      ${juzNum>1?`<button class="nav-btn" onclick="showJuz(${juzNum-1})">الجزء السابق</button>`:''}
+      ${juzNum<30?`<button class="nav-btn" onclick="showJuz(${juzNum+1})">الجزء التالي</button>`:''}
+    </div>
+  </div>
+  <p style="text-align:center;color:var(--text3);margin-bottom:28px;font-size:0.9rem">
+    اختر سورة من هذا الجزء للقراءة
+  </p>
+  <div class="suar-grid" style="max-width:900px;margin:0 auto;">`;
+
+  SUAR.forEach((s,i) => {
+    if (s.j === juzNum) {
+      html += `<div class="surah-card" onclick="showSurah(${i+1})">
+        <div class="surah-num">${toArabicNum(i+1)}</div>
+        <div class="surah-info">
+          <span class="surah-name">${s.n}</span>
+          <span class="surah-meta">${toArabicNum(s.a)} آية &nbsp;·&nbsp; ${s.r}</span>
+        </div>
+      </div>`;
+    }
+  });
+  html += `</div>`;
+  main.innerHTML = html;
+}
+
+// ── Show Surah ──
+async function showSurah(surahNum, scrollToAyah = null) {
+  main.innerHTML = '<div class="spinner"></div>';
+  try {
+    const res = await fetch(`https://api.alquran.cloud/v1/surah/${surahNum}`);
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+    const ayahs = data.data.ayahs;
+    const name  = data.data.name;
+
+    const prevBtn = surahNum > 1   ? `<button class="nav-btn" onclick="showSurah(${surahNum-1})">السورة السابقة</button>` : '';
+    const nextBtn = surahNum < 114 ? `<button class="nav-btn" onclick="showSurah(${surahNum+1})">السورة التالية</button>` : '';
+    const backTarget = currentView === 'juz' ? `showJuz(${SUAR[surahNum-1].j})` : 'showSurahList()';
+
+    let html = `
+    <div class="surah-nav">
+      <button class="nav-btn" onclick="${backTarget}">← رجوع</button>
+      <span class="surah-title-display">${name}</span>
+      <div style="display:flex;gap:8px">${prevBtn}${nextBtn}</div>
+    </div>
+    <p style="text-align:center;color:var(--text3);font-size:0.82rem;margin-bottom:24px">
+      📍 موضع قراءتك يُحفظ تلقائياً عند التمرير
+    </p>`;
+
+    if (surahNum !== 1 && surahNum !== 9) {
+      html += `<div style="text-align:center;margin-bottom:28px;">
+        <div class="hero-ayah" style="display:inline-flex;padding:14px 28px;">
+          <span class="ayah-text" style="font-size:1.6rem;">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</span>
+        </div>
+      </div>`;
+    }
+
+    html += `<div class="ayah-viewer">`;
+    ayahs.forEach(a => {
+      html += `<div class="ayah-item" data-ayah="${a.numberInSurah}" id="ayah-${a.numberInSurah}">
+        <span class="ayah-text">${a.text}</span>
+        <span class="ayah-num-badge">${toArabicNum(a.numberInSurah)}</span>
+      </div>`;
+    });
+    html += `</div>`;
+
+    main.innerHTML = html;
+
+    // Setup auto bookmark observer
+    setupAutoBookmark(surahNum);
+
+    // Scroll to saved position
+    if (scrollToAyah) {
+      setTimeout(() => {
+        const el = document.getElementById('ayah-' + scrollToAyah);
+        if (el) {
+          el.scrollIntoView({ behavior:'smooth', block:'center' });
+          el.classList.add('auto-bookmarked');
+          const lbl = document.createElement('span');
+          lbl.className = 'auto-bm-label';
+          lbl.textContent = '🔖 موضعك';
+          el.appendChild(lbl);
+        }
+      }, 400);
+    }
+
+    // Also save on page-hide / visibility change
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        const visible = getFirstVisible();
+        if (visible) saveBookmark(surahNum, parseInt(visible.dataset.ayah));
+      }
+    });
+    window.addEventListener('beforeunload', () => {
+      const visible = getFirstVisible();
+      if (visible) saveBookmark(surahNum, parseInt(visible.dataset.ayah));
+    });
+
+  } catch(e) {
+    main.innerHTML = `<div style="text-align:center;padding:60px 20px;color:var(--text2);">
+      <p style="font-size:1.1rem;margin-bottom:16px;">⚠️ تعذّر تحميل السورة</p>
+      <p style="color:var(--text3);">يرجى التحقق من اتصالك بالإنترنت</p>
+      <button class="nav-btn" style="margin-top:20px" onclick="showSurah(${surahNum})">إعادة المحاولة</button>
+    </div>`;
+  }
+}
+
+function getFirstVisible(){
+  const items = document.querySelectorAll('.ayah-item[data-ayah]');
+  for (const el of items) {
+    const r = el.getBoundingClientRect();
+    if (r.top >= 0 && r.top < window.innerHeight * 0.7) return el;
+  }
+  return null;
+}
+
+document.addEventListener('DOMContentLoaded', showSurahList);
+</script>
+</body>
+</html>

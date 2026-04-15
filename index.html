@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>في رحاب الحق</title>
+  <meta property="og:title" content="في رحاب الحق">
+  <meta property="og:description" content="موقعك الإسلامي للقرآن الكريم والأذكار والأدعية والمواضيع الدينية">
+  <meta property="og:type" content="website">
+  <script>
+    (function(){
+      const t = localStorage.getItem('rahab_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;700;900&family=Scheherazade+New:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header id="mainHeader">
+  <a href="index.html" class="logo-link">
+    <img src="preview.webp" alt="في رحاب الحق" class="logo-img">
+  </a>
+  <nav>
+    <ul>
+      <li><a href="index.html" class="active">الرئيسية</a></li>
+      <li><a href="quran.html">القرآن الكريم</a></li>
+      <li><a href="azkar.html">الأذكار</a></li>
+      <li><a href="duaa.html">الأدعية</a></li>
+      <li><a href="topics.html">مواضيع دينية</a></li>
+    </ul>
+  </nav>
+  <div class="header-left">
+    <button class="theme-toggle" aria-label="تغيير الوضع"></button>
+    <button class="menu-toggle" aria-label="القائمة">☰</button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <div class="bismillah">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
+    <h1>في رحاب الحـق</h1>
+    <p class="hero-sub">مرحباً بك في رحلتك نحو القرآن والذكر وسكينة الروح</p>
+    <div class="hero-ayah">
+      <span class="ayah-text">﴿ أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ ﴾</span>
+      <span class="ayah-ref">الرعد: ٢٨</span>
+    </div>
+    <a href="quran.html" class="cta-btn">ابدأ مع القرآن الكريم</a>
+  </div>
+</section>
+
+<section id="sections">
+  <h2 class="section-title">أقسام رحاب الحق</h2>
+  <div class="sections-grid">
+    <a href="quran.html" class="section-card">
+      <div class="card-icon">📖</div>
+      <h3>القرآن الكريم</h3>
+      <p>تصفح بالسور أو الأجزاء، وتابع رحلتك — موضع قراءتك يُحفظ تلقائياً</p>
+      <span class="card-arrow">←</span>
+    </a>
+    <a href="azkar.html" class="section-card">
+      <div class="card-icon">🌙</div>
+      <h3>أذكار الصباح والمساء</h3>
+      <p>حصّن يومك بأذكار النبي ﷺ مع عداد لكل ذكر</p>
+      <span class="card-arrow">←</span>
+    </a>
+    <a href="duaa.html" class="section-card">
+      <div class="card-icon">🤲</div>
+      <h3>الأدعية المستحبة</h3>
+      <p>أدعية مأثورة مقسّمة حسب الأحوال والمناسبات</p>
+      <span class="card-arrow">←</span>
+    </a>
+    <a href="topics.html" class="section-card">
+      <div class="card-icon">🕌</div>
+      <h3>مواضيع دينية</h3>
+      <p>مقالات إسلامية مختارة تغذي الروح وتنير العقل</p>
+      <span class="card-arrow">←</span>
+    </a>
+  </div>
+</section>
+
+<section class="ayah-section section-alt">
+  <div class="ayah-container">
+    <h2 class="section-title">آية اليوم</h2>
+    <div class="daily-ayah" id="dailyAyah">
+      <div class="ayah-loading">جارٍ تحميل الآية...</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="reminder-box">
+    <span class="reminder-icon">⭐</span>
+    <h3>هل قرأت وردك اليوم؟</h3>
+    <div class="daily-checklist">
+      <label class="check-item"><input type="checkbox" id="c1"><span>صليت الفجر في وقته</span></label>
+      <label class="check-item"><input type="checkbox" id="c2"><span>قرأت أذكار الصباح</span></label>
+      <label class="check-item"><input type="checkbox" id="c3"><span>قرأت حزبي قرآن</span></label>
+      <label class="check-item"><input type="checkbox" id="c4"><span>قرأت أذكار المساء</span></label>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">
+    <img src="preview.webp" alt="رحاب الحق">
+  </div>
+  
+  <p class="footer-text">في رحاب الحق - موقع إسلامي للقرآن والذكر </p>
+  <p class="footer-text">🌸اللهم اجعل هذا العمل خالصاً لوجهك الكريم🌸</p>
+
+  <p class="footer-sub">dev by : Majd.sh &copy; 2026 </p>
+</footer>
+
+<script src="main.js"></script>
+</body>
+</html>
