@@ -82,3 +82,28 @@ self.addEventListener('notificationclick', event => {
     })
   );
 });
+
+// Listen for messages from the page (e.g., request to download Quran for offline)
+self.addEventListener('message', event => {
+  const data = event.data || {};
+  if (data && data.type === 'DOWNLOAD_QURAN') {
+    (async () => {
+      const total = 114;
+      const cache = await caches.open(CACHE_NAME);
+      for (let i = 1; i <= total; i++) {
+        try {
+          const reqUrl = `https://api.alquran.cloud/v1/surah/${i}`;
+          const res = await fetch(reqUrl);
+          if (res && res.ok) await cache.put(reqUrl, res.clone());
+        } catch (e) {
+          // ignore individual failures, continue
+        }
+        // broadcast progress to all clients
+        const clientsList = await self.clients.matchAll({ includeUncontrolled: true });
+        clientsList.forEach(c => c.postMessage({ type: 'DOWNLOAD_PROGRESS', done: i, total }));
+      }
+      const clientsList = await self.clients.matchAll({ includeUncontrolled: true });
+      clientsList.forEach(c => c.postMessage({ type: 'DOWNLOAD_COMPLETE' }));
+    })();
+  }
+});

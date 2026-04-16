@@ -39,6 +39,11 @@
   <p>اقرأ، تدبّر — موضعك يُحفظ تلقائياً</p>
 </section>
 
+<div id="qDownloadBanner" style="padding:10px 20px;display:flex;gap:12px;align-items:center;justify-content:center;">
+  <button id="downloadQBtn" style="padding:8px 12px;border-radius:8px;background:var(--green);color:#fff;border:none;cursor:pointer;">⬇️ تنزيل السور للتشغيل بدون نت</button>
+  <div id="downloadStatus" style="font-size:0.95rem;color:var(--text3);"></div>
+</div>
+
 <section style="padding-top:10px;" id="quranMain">
   <div class="spinner"></div>
 </section>
@@ -108,14 +113,7 @@ const SUAR = [
   {n:"الإخلاص",a:4,j:30,r:"مكية"},{n:"الفلق",a:5,j:30,r:"مكية"},   {n:"الناس",a:6,j:30,r:"مكية"}
 ];
 
-// Juz start info (surah, ayah)
-const JUZ_START = [
-  [1,1],[2,142],[2,253],[3,93],[4,24],[4,148],[5,82],[6,111],[7,88],[8,41],
-  [9,93],[11,6],[12,53],[15,1],[17,1],[18,75],[21,1],[23,1],[25,21],[27,56],
-  [29,46],[33,31],[36,28],[39,32],[41,47],[46,1],[51,31],[58,1],[67,1],[78,1]
-];
-
-const JUZ_NAMES = Array.from({length:30},(_,i)=>`الجزء ${toArabicNum(i+1)}`);
+// (تم إزالة دعم الأجزاء - العرض يعتمد الآن على السور فقط)
 
 function toArabicNum(n){
   return n.toString().replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);
@@ -172,7 +170,7 @@ function setupAutoBookmark(surahNum) {
 //  MAIN AREA
 // =============================================
 const main = document.getElementById('quranMain');
-let currentView = 'surah'; // 'surah' | 'juz'
+let currentView = 'surah';
 let searchQ = '';
 
 // ── Surah List ──
@@ -181,10 +179,6 @@ function showSurahList() {
   const bm = getBookmark();
   let html = `<div class="quran-controls">
     <input id="qSearch" class="q-search" type="text" placeholder="🔍 ابحث عن سورة..." value="${searchQ}">
-    <div class="view-tabs">
-      <button class="view-btn active" onclick="showSurahList()">📋 السور</button>
-      <button class="view-btn" onclick="showJuzList()">📑 الأجزاء</button>
-    </div>
   </div>`;
 
   if (bm) {
@@ -221,79 +215,6 @@ function showSurahList() {
   });
 }
 
-// ── Juz List ──
-function showJuzList() {
-  currentView = 'juz';
-  const bm = getBookmark();
-  let html = `<div class="quran-controls">
-    <input id="qSearch" class="q-search" type="text" placeholder="🔍 ابحث عن سورة..." value="${searchQ}">
-    <div class="view-tabs">
-      <button class="view-btn" onclick="showSurahList()">📋 السور</button>
-      <button class="view-btn active" onclick="showJuzList()">📑 الأجزاء</button>
-    </div>
-  </div>`;
-
-  if (bm) {
-    html += `<div class="bookmark-banner" onclick="showSurah(${bm.surah},${bm.ayah})">
-      <span style="font-size:1.5rem">🔖</span>
-      <div><strong>استكمل من حيث توقفت</strong><br>
-      <span>سورة ${bm.name} — الآية ${toArabicNum(bm.ayah)}</span></div>
-      <span style="margin-right:auto;color:var(--gold);font-size:1.1rem">←</span>
-    </div>`;
-  }
-
-  html += `<div class="juz-grid">`;
-  for (let j=1; j<=30; j++) {
-    const [s,a] = JUZ_START[j-1];
-    html += `<div class="juz-card" onclick="showJuz(${j})">
-      <div class="juz-num">${toArabicNum(j)}</div>
-      <div class="juz-label">الجزء ${toArabicNum(j)}</div>
-      <div style="font-size:0.75rem;color:var(--text3);margin-top:4px">${SUAR[s-1].n}</div>
-    </div>`;
-  }
-  html += `</div>`;
-  main.innerHTML = html;
-}
-
-// ── Show Juz (show surah list filtered) ──
-async function showJuz(juzNum) {
-  const [startSurah] = JUZ_START[juzNum-1];
-  const endSurah = juzNum < 30 ? JUZ_START[juzNum][0] : 114;
-
-  main.innerHTML = `<div class="spinner"></div>`;
-  // Load all surahs in this juz and display together
-  const surahs = [];
-  for (let s = startSurah; s <= endSurah; s++) {
-    if (SUAR[s-1].j === juzNum || s === startSurah) surahs.push(s);
-  }
-
-  let html = `<div class="surah-nav" style="margin-bottom:24px;">
-    <button class="nav-btn" onclick="showJuzList()">← الأجزاء</button>
-    <span class="surah-title-display">الجزء ${toArabicNum(juzNum)}</span>
-    <div style="display:flex;gap:8px">
-      ${juzNum>1?`<button class="nav-btn" onclick="showJuz(${juzNum-1})">الجزء السابق</button>`:''}
-      ${juzNum<30?`<button class="nav-btn" onclick="showJuz(${juzNum+1})">الجزء التالي</button>`:''}
-    </div>
-  </div>
-  <p style="text-align:center;color:var(--text3);margin-bottom:28px;font-size:0.9rem">
-    اختر سورة من هذا الجزء للقراءة
-  </p>
-  <div class="suar-grid" style="max-width:900px;margin:0 auto;">`;
-
-  SUAR.forEach((s,i) => {
-    if (s.j === juzNum) {
-      html += `<div class="surah-card" onclick="showSurah(${i+1})">
-        <div class="surah-num">${toArabicNum(i+1)}</div>
-        <div class="surah-info">
-          <span class="surah-name">${s.n}</span>
-          <span class="surah-meta">${toArabicNum(s.a)} آية &nbsp;·&nbsp; ${s.r}</span>
-        </div>
-      </div>`;
-    }
-  });
-  html += `</div>`;
-  main.innerHTML = html;
-}
 
 // ── Show Surah ──
 async function showSurah(surahNum, scrollToAyah = null) {
@@ -307,7 +228,7 @@ async function showSurah(surahNum, scrollToAyah = null) {
 
     const prevBtn = surahNum > 1   ? `<button class="nav-btn" onclick="showSurah(${surahNum-1})">السورة السابقة</button>` : '';
     const nextBtn = surahNum < 114 ? `<button class="nav-btn" onclick="showSurah(${surahNum+1})">السورة التالية</button>` : '';
-    const backTarget = currentView === 'juz' ? `showJuz(${SUAR[surahNum-1].j})` : 'showSurahList()';
+    const backTarget = 'showSurahList()';
 
     let html = `
     <div class="surah-nav">
@@ -404,6 +325,48 @@ function getFirstVisible(){
 }
 
 document.addEventListener('DOMContentLoaded', showSurahList);
+
+// --- Offline download logic (trigger SW to cache all surahs) ---
+const downloadBtn = document.getElementById('downloadQBtn');
+const downloadStatus = document.getElementById('downloadStatus');
+function setStatus(t){ if(downloadStatus) downloadStatus.textContent = t; }
+
+async function sendDownloadRequest(){
+  if (!('serviceWorker' in navigator)) return setStatus('خدمة العمل غير متوفرة');
+  const reg = await navigator.serviceWorker.ready;
+  try {
+    // send message to SW to start download
+    if (reg.active) reg.active.postMessage({ type: 'DOWNLOAD_QURAN' });
+    else if (reg.installing) reg.installing.postMessage({ type: 'DOWNLOAD_QURAN' });
+    setStatus('بدء تنزيل السور...');
+    localStorage.setItem('q_download_pending', '1');
+  } catch (e) {
+    setStatus('فشل إرسال الطلب');
+  }
+}
+
+// Listen for progress messages from SW
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.addEventListener('message', e => {
+    const d = e.data || {};
+    if (d.type === 'DOWNLOAD_PROGRESS') {
+      setStatus(`جارٍ تنزيل ${d.done}/${d.total}`);
+    } else if (d.type === 'DOWNLOAD_COMPLETE') {
+      setStatus('اكتمل تنزيل السور. يمكنك الآن قراءة المصحف بدون اتصال.');
+      localStorage.setItem('q_downloaded', '1');
+      localStorage.removeItem('q_download_pending');
+    }
+  });
+}
+
+if (downloadBtn) downloadBtn.addEventListener('click', () => {
+  const already = localStorage.getItem('q_downloaded');
+  if (already) return setStatus('السور محمّلة فعلاً');
+  // Confirm with user (simple confirm dialog)
+  if (confirm('تنزيل جميع السور للتشغيل دون اتصال قد يستهلك بيانات. متابعة؟')) {
+    sendDownloadRequest();
+  }
+});
 </script>
 </body>
 </html>
