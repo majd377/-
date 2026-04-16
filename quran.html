@@ -8,6 +8,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;700;900&family=Scheherazade+New:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#2e7d52">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="رحاب الحق">
+  <link rel="apple-touch-icon" href="preview.webp">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -43,6 +48,18 @@
   <p class="footer-sub">اللهم اجعل هذا العمل خالصاً لوجهك الكريم</p>
 </footer>
 
+<!-- PWA Install Banner -->
+<div id="installBanner" class="install-banner hidden" aria-hidden="true">
+  <div class="install-inner">
+    <span style="font-size:1.4rem">📲</span>
+    <div class="install-msg">ثبّت التطبيق على جهازك لتجربة أفضل</div>
+    <div class="install-actions">
+      <button id="installBtn">تثبيت</button>
+      <button id="enableNotif">🔔 إشعارات</button>
+      <button id="dismissInstall" class="muted">✕</button>
+    </div>
+  </div>
+</div>
 <script src="main.js"></script>
 <script>
 // =============================================
@@ -309,11 +326,28 @@ async function showSurah(surahNum, scrollToAyah = null) {
         </div>
       </div>`;
     }
+    // Display-only Basmala stripping: strip basmala from first ayah display only
+    function stripBasmalaForDisplay(text) {
+      if (!text) return text;
+      let t = text;
+      // 1) Unicode basmala ligature ﷽ (U+FDFD)
+      t = t.replace(/\uFDFD/g, '');
+      // 2) Fully vocalized forms from the API
+      t = t.replace(/بِسْمِ\s*ٱللَّهِ\s*ٱلرَّحْمَٰنِ\s*ٱلرَّحِيمِ/u, '');
+      t = t.replace(/بِسْمِ\s*اللَّهِ\s*الرَّحْمَنِ\s*الرَّحِيمِ/u, '');
+      t = t.replace(/بِسْمِ\s*ٱللَّهِ\s*ٱلرَّحْمَنِ\s*ٱلرَّحِيمِ/u, '');
+      // 3) Plain unvocalized forms
+      t = t.replace(/بسم\s*الله\s*الرحمن\s*الرحيم/u, '');
+      // 4) Clean up any leading punctuation/space left behind
+      t = t.replace(/^[\s\u0020\u00a0\u200b،؛:.،\-–—()[\]]+/, '').trim();
+      return t || text; // fallback to original if stripping ate everything
+    }
 
     html += `<div class="ayah-viewer">`;
     ayahs.forEach(a => {
+      const displayText = (a.numberInSurah === 1 && surahNum !== 1 && surahNum !== 9) ? stripBasmalaForDisplay(a.text) : a.text;
       html += `<div class="ayah-item" data-ayah="${a.numberInSurah}" id="ayah-${a.numberInSurah}">
-        <span class="ayah-text">${a.text}</span>
+        <span class="ayah-text">${displayText}</span>
         <span class="ayah-num-badge">${toArabicNum(a.numberInSurah)}</span>
       </div>`;
     });

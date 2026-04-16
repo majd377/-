@@ -729,3 +729,78 @@ footer {
   .bismillah { font-size:1.15rem; }
   .suar-grid { grid-template-columns:1fr 1fr; gap:10px; }
 }
+
+/* ─────────────────────────────────
+   PWA INSTALL BANNER
+───────────────────────────────── */
+.install-banner {
+  position: fixed;
+  bottom: 20px; left: 12px; right: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: var(--shadow-lg);
+  padding: 14px 16px;
+  z-index: 9998;
+  transition: transform 0.4s cubic-bezier(.4,0,.2,1), opacity 0.4s;
+  animation: slideUp 0.4s ease both;
+}
+.install-banner.hidden {
+  display: none;
+}
+@keyframes slideUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+.install-inner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.install-msg {
+  font-weight: 600;
+  color: var(--green);
+  font-size: 0.93rem;
+  flex: 1;
+  min-width: 140px;
+}
+.install-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.install-actions button {
+  padding: 8px 16px;
+  border-radius: 50px;
+  border: none;
+  font-family: var(--font);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+#installBtn {
+  background: var(--green);
+  color: #fff;
+}
+#installBtn:hover { background: var(--green-h); }
+#enableNotif {
+  background: var(--gold-pale);
+  color: var(--gold);
+  border: 1px solid rgba(160,120,40,0.3) !important;
+}
+#enableNotif:hover { background: var(--gold); color: #fff; }
+#dismissInstall {
+  background: transparent;
+  color: var(--text3);
+  border: 1px solid var(--border) !important;
+}
+#dismissInstall:hover { color: var(--text); }
+
+@media (min-width: 600px) {
+  .install-banner {
+    left: auto; right: 24px; bottom: 24px;
+    width: 380px;
+  }
+}

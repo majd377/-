@@ -1,22 +1,45 @@
 {
   "name": "في رحاب الحق",
   "short_name": "رحاب الحق",
-  "description": "تطبيق مواضيع دينية وأذكار وأدعية",
+  "description": "موقع إسلامي للقرآن الكريم والأذكار والأدعية والمواضيع الدينية",
   "lang": "ar",
+  "dir": "rtl",
   "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#0b6623",
+  "orientation": "portrait",
+  "background_color": "#f0f7f2",
+  "theme_color": "#2e7d52",
+  "categories": ["education", "lifestyle"],
   "icons": [
     {
       "src": "preview.webp",
       "sizes": "192x192",
-      "type": "image/webp"
+      "type": "image/webp",
+      "purpose": "any maskable"
     },
     {
       "src": "preview.webp",
       "sizes": "512x512",
-      "type": "image/webp"
+      "type": "image/webp",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "القرآن الكريم",
+      "short_name": "القرآن",
+      "description": "افتح صفحة القرآن مباشرة",
+      "url": "./quran.html",
+      "icons": [{ "src": "preview.webp", "sizes": "96x96" }]
+    },
+    {
+      "name": "الأذكار",
+      "short_name": "الأذكار",
+      "description": "أذكار الصباح والمساء",
+      "url": "./azkar.html",
+      "icons": [{ "src": "preview.webp", "sizes": "96x96" }]
     }
   ]
 }

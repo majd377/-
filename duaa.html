@@ -7,12 +7,17 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;700;900&family=Scheherazade+New:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#2e7d52">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="رحاب الحق">
+  <link rel="apple-touch-icon" href="preview.webp">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <header id="mainHeader">
   <a href="index.html" class="logo-link">
-    <img src="preview.webp" alt="رحاب الحق" class="logo-img">
+    <img src="https://claude.ai/api/1377ff21-2391-4cf8-ae96-8420ab279142/files/019d90b5-a2c1-73cb-9e30-2eebabe95e91/preview" alt="رحاب الحق" class="logo-img">
   </a>
   <nav><ul>
     <li><a href="index.html">الرئيسية</a></li>
@@ -42,6 +47,18 @@
   <div id="duaaContent"></div>
 </section>
 <footer><p class="footer-text">في رحاب الحق</p><p class="footer-sub">اللهم اجعل هذا العمل خالصاً لوجهك الكريم</p></footer>
+<!-- PWA Install Banner -->
+<div id="installBanner" class="install-banner hidden" aria-hidden="true">
+  <div class="install-inner">
+    <span style="font-size:1.4rem">📲</span>
+    <div class="install-msg">ثبّت التطبيق على جهازك لتجربة أفضل</div>
+    <div class="install-actions">
+      <button id="installBtn">تثبيت</button>
+      <button id="enableNotif">🔔 إشعارات</button>
+      <button id="dismissInstall" class="muted">✕</button>
+    </div>
+  </div>
+</div>
 <script src="main.js"></script>
 <script>
 const DUAA={
