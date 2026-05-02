@@ -14,6 +14,132 @@
   <meta name="apple-mobile-web-app-title" content="رحاب الحق">
   <link rel="apple-touch-icon" href="preview.webp">
   <link rel="stylesheet" href="styles.css">
+  <style>
+    /* ══════════════════════════════════════
+       شريط الصوت الثابت
+    ══════════════════════════════════════ */
+    #audioBar {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: var(--surface);
+      border-top: 2px solid var(--green);
+      padding: 10px 16px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 2000;
+      box-shadow: 0 -4px 24px rgba(0,0,0,0.14);
+      transform: translateY(100%);
+      transition: transform 0.35s cubic-bezier(.4,0,.2,1);
+    }
+    #audioBar.visible { transform: translateY(0); }
+    #audioProgressBar {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--border);
+    }
+    #audioProgressFill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--green), var(--gold-l));
+      width: 0%;
+      border-radius: 0 2px 2px 0;
+      transition: width 0.4s linear;
+    }
+    .ab-info { flex: 1; min-width: 0; }
+    .ab-label {
+      font-size: 0.75rem;
+      color: var(--text3);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .ab-surah {
+      font-family: var(--font-quran);
+      font-size: 1rem;
+      color: var(--green);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .ab-controls { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+    .ab-btn {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 50%;
+      width: 36px; height: 36px;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: 0.2s;
+    }
+    .ab-btn:hover { background: var(--green-glow); border-color: var(--green); }
+    #abPlayPause {
+      background: var(--green) !important;
+      color: #fff !important;
+      border-color: var(--green) !important;
+      width: 42px; height: 42px;
+      font-size: 1.15rem;
+    }
+    #abPlayPause:hover { background: var(--green-h) !important; }
+    #abClose { background: transparent; border: none; color: var(--text3); font-size: 1rem; }
+    body.audio-open { padding-bottom: 70px; }
+
+    /* ══════════════════════════════════════
+       أزرار تشغيل الآية والسورة
+    ══════════════════════════════════════ */
+    .ayah-play-btn {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--green);
+      border-radius: 50px;
+      padding: 3px 11px;
+      font-size: 0.76rem;
+      cursor: pointer;
+      transition: 0.2s;
+      font-family: var(--font);
+    }
+    .ayah-play-btn:hover,
+    .ayah-play-btn.playing {
+      background: var(--green);
+      color: #fff;
+      border-color: var(--green);
+    }
+    .surah-audio-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+    .surah-full-btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: var(--surface);
+      border: 1.5px solid var(--green);
+      color: var(--green);
+      border-radius: 50px;
+      padding: 9px 24px;
+      font-size: 0.93rem;
+      font-family: var(--font);
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.25s;
+      box-shadow: 0 2px 10px rgba(46,125,82,0.08);
+    }
+    .surah-full-btn:hover {
+      background: var(--green);
+      color: #fff;
+      box-shadow: 0 6px 20px rgba(46,125,82,0.22);
+    }
+    /* زر التنزيل الصوتي */
+    #downloadAudioBtn {
+      padding: 8px 14px; border-radius: 8px;
+      background: var(--surface); color: var(--text2);
+      border: 1px solid var(--border); cursor: pointer;
+      font-size: 0.88rem; font-family: var(--font);
+      transition: 0.2s;
+    }
+    #downloadAudioBtn:hover { border-color: var(--green); color: var(--green); }
+  </style>
 </head>
 <body>
 
@@ -36,12 +162,13 @@
 
 <section class="page-hero">
   <h1>📖 القرآن الكريم</h1>
-  <p>اقرأ، تدبّر — موضعك يُحفظ تلقائياً</p>
+  <p>اقرأ، تدبّر، استمع — موضعك يُحفظ تلقائياً</p>
 </section>
 
-<div id="qDownloadBanner" style="padding:10px 20px;display:flex;gap:12px;align-items:center;justify-content:center;">
-  <button id="downloadQBtn" style="padding:8px 12px;border-radius:8px;background:var(--green);color:#fff;border:none;cursor:pointer;">⬇️ تنزيل السور للتشغيل بدون نت</button>
-  <div id="downloadStatus" style="font-size:0.95rem;color:var(--text3);"></div>
+<div id="qDownloadBanner" style="padding:10px 20px;display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;">
+  <button id="downloadQBtn" style="padding:8px 12px;border-radius:8px;background:var(--green);color:#fff;border:none;cursor:pointer;font-family:var(--font);">⬇️ تنزيل السور بدون نت</button>
+  <button id="downloadAudioBtn">🎧 تنزيل التلاوة (مشاري راشد العفاسي)</button>
+  <div id="downloadStatus" style="font-size:0.9rem;color:var(--text3);width:100%;text-align:center;min-height:1.2em;"></div>
 </div>
 
 <section style="padding-top:10px;" id="quranMain">
@@ -52,6 +179,23 @@
   <p class="footer-text">في رحاب الحق</p>
   <p class="footer-sub">اللهم اجعل هذا العمل خالصاً لوجهك الكريم</p>
 </footer>
+
+<!-- ═══════════════════════════════════
+     شريط الصوت الثابت أسفل الشاشة
+═══════════════════════════════════ -->
+<div id="audioBar" role="region" aria-label="مشغل التلاوة">
+  <div id="audioProgressBar"><div id="audioProgressFill"></div></div>
+  <div class="ab-info">
+    <div class="ab-label" id="abLabel">القارئ: مشاري راشد العفاسي</div>
+    <div class="ab-surah" id="abSurah">—</div>
+  </div>
+  <div class="ab-controls">
+    <button class="ab-btn" id="abPrev"  title="الآية السابقة">⏮</button>
+    <button class="ab-btn" id="abPlayPause" title="تشغيل / إيقاف">▶</button>
+    <button class="ab-btn" id="abNext"  title="الآية التالية">⏭</button>
+    <button class="ab-btn" id="abClose" title="إغلاق المشغل">✕</button>
+  </div>
+</div>
 
 <!-- PWA Install Banner -->
 <div id="installBanner" class="install-banner hidden" aria-hidden="true">
@@ -65,13 +209,12 @@
     </div>
   </div>
 </div>
+
 <script src="main.js"></script>
 <script>
-// =============================================
-//  QURAN DATA
-// =============================================
-const LOGO = 'https://claude.ai/api/1377ff21-2391-4cf8-ae96-8420ab279142/files/019d90b5-a2c1-73cb-9e30-2eebabe95e91/preview';
-
+// ════════════════════════════════════════
+//  بيانات السور
+// ════════════════════════════════════════
 const SUAR = [
   {n:"الفاتحة",a:7,j:1,r:"مكية"},  {n:"البقرة",a:286,j:1,r:"مدنية"}, {n:"آل عمران",a:200,j:3,r:"مدنية"},
   {n:"النساء",a:176,j:4,r:"مدنية"},{n:"المائدة",a:120,j:6,r:"مدنية"},{n:"الأنعام",a:165,j:7,r:"مكية"},
@@ -113,201 +256,310 @@ const SUAR = [
   {n:"الإخلاص",a:4,j:30,r:"مكية"},{n:"الفلق",a:5,j:30,r:"مكية"},   {n:"الناس",a:6,j:30,r:"مكية"}
 ];
 
-// (تم إزالة دعم الأجزاء - العرض يعتمد الآن على السور فقط)
-
 function toArabicNum(n){
   return n.toString().replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);
 }
 
-// =============================================
-//  BOOKMARK  (auto-saved)
-// =============================================
-function getBookmark(){
-  try { return JSON.parse(localStorage.getItem('q_bm')); } catch{ return null; }
+// ════════════════════════════════════════
+//  محرك الصوت — مشاري راشد العفاسي
+//  آية بآية : everyayah.com/data/Alafasy_128kbps/{SSS}{AAA}.mp3
+//  سورة كاملة: quranicaudio.com/quran/mishaari_raashid_al_3afaasee/{SSS}.mp3
+// ════════════════════════════════════════
+const READER = 'Alafasy_128kbps';
+const FULL_BASE = 'https://download.quranicaudio.com/quran/mishaari_raashid_al_3afaasee/';
+
+function ayahUrl(s, a){
+  return `https://everyayah.com/data/${READER}/${String(s).padStart(3,'0')}${String(a).padStart(3,'0')}.mp3`;
 }
-function saveBookmark(surah, ayah){
-  localStorage.setItem('q_bm', JSON.stringify({surah, ayah, name: SUAR[surah-1].n, ts: Date.now()}));
+function surahUrl(s){
+  return `${FULL_BASE}${String(s).padStart(3,'0')}.mp3`;
 }
 
-// =============================================
-//  INTERSECTION OBSERVER  — auto bookmark
-// =============================================
-let bmObserver = null;
-let bmDebounce = null;
+// ── حالة المشغل ──
+let _audio = null;
+let _queue = [];   // [{url, label, ayahNum}]
+let _qi    = 0;
+let _surahMode = false;  // true = سورة كاملة بملف واحد
 
-function setupAutoBookmark(surahNum) {
-  if (bmObserver) bmObserver.disconnect();
+function audio(){
+  if(!_audio){
+    _audio = new Audio();
+    _audio.addEventListener('ended', _onEnded);
+    _audio.addEventListener('timeupdate', _onTime);
+    _audio.addEventListener('error', _onErr);
+  }
+  return _audio;
+}
+
+function _onTime(){
+  const a = audio();
+  if(!a.duration) return;
+  document.getElementById('audioProgressFill').style.width = (a.currentTime/a.duration*100)+'%';
+}
+function _onEnded(){
+  if(_surahMode){ _hideBar(); return; }
+  if(_qi < _queue.length-1){ _qi++; _playIdx(_qi); }
+  else _hideBar();
+}
+function _onErr(){
+  if(!_surahMode && _qi < _queue.length-1){ _qi++; _playIdx(_qi); }
+}
+
+function _playIdx(i){
+  const item = _queue[i];
+  if(!item) return;
+  const a = audio();
+  a.pause();
+  a.src = item.url;
+  a.load();
+  a.play().catch(()=>{});
+  document.getElementById('abSurah').textContent  = item.label;
+  document.getElementById('abPlayPause').textContent = '⏸';
+  document.getElementById('audioProgressFill').style.width = '0%';
+  _showBar();
+  // تحديث أزرار الآيات
+  document.querySelectorAll('.ayah-play-btn').forEach(b=>b.classList.remove('playing'));
+  if(!_surahMode && item.ayahNum){
+    const b = document.querySelector(`.ayah-play-btn[data-ayah="${item.ayahNum}"]`);
+    if(b) b.classList.add('playing');
+  }
+}
+
+function _showBar(){
+  document.getElementById('audioBar').classList.add('visible');
+  document.body.classList.add('audio-open');
+}
+function _hideBar(){
+  const a = audio();
+  a.pause(); a.src='';
+  document.getElementById('audioBar').classList.remove('visible');
+  document.body.classList.remove('audio-open');
+  document.querySelectorAll('.ayah-play-btn').forEach(b=>b.classList.remove('playing'));
+  document.getElementById('abPlayPause').textContent = '▶';
+  document.getElementById('audioProgressFill').style.width = '0%';
+  _queue=[]; _qi=0; _surahMode=false;
+}
+
+// ── API للخارج ──
+// تشغيل آية واحدة مع تتابع بقية الآيات
+function playAyah(surahNum, ayahNum){
+  _surahMode = false;
+  const ayahs = _currentAyahs;
+  _queue = [];
+  let started = false;
+  ayahs.forEach(a=>{
+    if(a.numberInSurah === ayahNum) started=true;
+    if(started){
+      _queue.push({
+        url: ayahUrl(surahNum, a.numberInSurah),
+        label: `سورة ${SUAR[surahNum-1].n} — الآية ${toArabicNum(a.numberInSurah)}`,
+        ayahNum: a.numberInSurah
+      });
+    }
+  });
+  _qi=0;
+  _playIdx(0);
+}
+
+// تشغيل السورة كاملة بملف واحد
+function playSurahFull(surahNum){
+  _surahMode = true;
+  document.getElementById('abLabel').textContent = 'القارئ: مشاري راشد العفاسي — سورة كاملة';
+  _queue = [{
+    url: surahUrl(surahNum),
+    label: `سورة ${SUAR[surahNum-1].n} كاملة`,
+    ayahNum: null
+  }];
+  _qi=0;
+  _playIdx(0);
+}
+
+// أحداث أزرار الشريط
+document.addEventListener('DOMContentLoaded', ()=>{
+  document.getElementById('abPlayPause').addEventListener('click',()=>{
+    const a = audio();
+    if(a.paused){ a.play(); document.getElementById('abPlayPause').textContent='⏸'; }
+    else { a.pause(); document.getElementById('abPlayPause').textContent='▶'; }
+  });
+  document.getElementById('abPrev').addEventListener('click',()=>{
+    if(_surahMode) return;
+    if(_qi>0){ _qi--; _playIdx(_qi); }
+  });
+  document.getElementById('abNext').addEventListener('click',()=>{
+    if(_surahMode) return;
+    if(_qi<_queue.length-1){ _qi++; _playIdx(_qi); }
+  });
+  document.getElementById('abClose').addEventListener('click', _hideBar);
+});
+
+// ════════════════════════════════════════
+//  حفظ الموضع
+// ════════════════════════════════════════
+function getBookmark(){ try{return JSON.parse(localStorage.getItem('q_bm'));}catch{return null;} }
+function saveBookmark(s,a){ localStorage.setItem('q_bm',JSON.stringify({surah:s,ayah:a,name:SUAR[s-1].n,ts:Date.now()})); }
+
+let _bmObs=null, _bmTimer=null;
+function setupAutoBookmark(surahNum){
+  if(_bmObs) _bmObs.disconnect();
   const items = document.querySelectorAll('.ayah-item[data-ayah]');
-  bmObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const ayahNum = parseInt(entry.target.dataset.ayah);
-        clearTimeout(bmDebounce);
-        bmDebounce = setTimeout(() => {
-          saveBookmark(surahNum, ayahNum);
-          // subtle visual indicator
-          document.querySelectorAll('.ayah-item.auto-bookmarked').forEach(el => {
+  _bmObs = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        clearTimeout(_bmTimer);
+        _bmTimer = setTimeout(()=>{
+          const n = parseInt(e.target.dataset.ayah);
+          saveBookmark(surahNum,n);
+          document.querySelectorAll('.ayah-item.auto-bookmarked').forEach(el=>{
             el.classList.remove('auto-bookmarked');
-            const lbl = el.querySelector('.auto-bm-label');
-            if (lbl) lbl.remove();
+            el.querySelector('.auto-bm-label')?.remove();
           });
-          entry.target.classList.add('auto-bookmarked');
-          if (!entry.target.querySelector('.auto-bm-label')) {
-            const lbl = document.createElement('span');
-            lbl.className = 'auto-bm-label';
-            lbl.textContent = '🔖 موضعك';
-            entry.target.appendChild(lbl);
+          e.target.classList.add('auto-bookmarked');
+          if(!e.target.querySelector('.auto-bm-label')){
+            const lbl=document.createElement('span');
+            lbl.className='auto-bm-label'; lbl.textContent='🔖 موضعك';
+            e.target.appendChild(lbl);
           }
-        }, 800);
+        },800);
       }
     });
-  }, { threshold: 0.6, rootMargin: '-20% 0px -20% 0px' });
-
-  items.forEach(el => bmObserver.observe(el));
+  },{threshold:0.6,rootMargin:'-20% 0px -20% 0px'});
+  items.forEach(el=>_bmObs.observe(el));
 }
 
-// =============================================
-//  MAIN AREA
-// =============================================
+// ════════════════════════════════════════
+//  المنطقة الرئيسية
+// ════════════════════════════════════════
 const main = document.getElementById('quranMain');
-let currentView = 'surah';
 let searchQ = '';
+let _currentAyahs = [];
 
-// ── Surah List ──
-function showSurahList() {
-  currentView = 'surah';
+function showSurahList(){
+  _hideBar();
   const bm = getBookmark();
   let html = `<div class="quran-controls">
     <input id="qSearch" class="q-search" type="text" placeholder="🔍 ابحث عن سورة..." value="${searchQ}">
   </div>`;
-
-  if (bm) {
-    html += `<div class="bookmark-banner" onclick="showSurah(${bm.surah},${bm.ayah})">
+  if(bm){
+    html+=`<div class="bookmark-banner" onclick="showSurah(${bm.surah},${bm.ayah})">
       <span style="font-size:1.5rem">🔖</span>
       <div><strong>استكمل من حيث توقفت</strong><br>
       <span>سورة ${bm.name} — الآية ${toArabicNum(bm.ayah)}</span></div>
       <span style="margin-right:auto;color:var(--gold);font-size:1.1rem">←</span>
     </div>`;
   }
-
-  html += `<div class="suar-grid" id="suarGrid">`;
-  SUAR.forEach((s,i) => {
-    const num = i+1;
-    const hasBm = bm && bm.surah === num;
-    html += `<div class="surah-card" onclick="showSurah(${num})">
+  html+=`<div class="suar-grid" id="suarGrid">`;
+  SUAR.forEach((s,i)=>{
+    const num=i+1, hasBm=bm&&bm.surah===num;
+    html+=`<div class="surah-card" onclick="showSurah(${num})">
       <div class="surah-num">${toArabicNum(num)}</div>
       <div class="surah-info">
         <span class="surah-name">${s.n}</span>
-        <span class="surah-meta">${toArabicNum(s.a)} آية &nbsp;·&nbsp; ${s.r}</span>
+        <span class="surah-meta">${toArabicNum(s.a)} آية · ${s.r}</span>
       </div>
-      ${hasBm ? '<div class="surah-bookmark-dot"></div>' : ''}
+      ${hasBm?'<div class="surah-bookmark-dot"></div>':''}
     </div>`;
   });
-  html += `</div>`;
-  main.innerHTML = html;
-
-  // search
-  document.getElementById('qSearch').addEventListener('input', function(){
-    searchQ = this.value.trim();
-    document.querySelectorAll('.surah-card').forEach(c => {
-      c.style.display = (!searchQ || c.querySelector('.surah-name').textContent.includes(searchQ)) ? '' : 'none';
+  html+=`</div>`;
+  main.innerHTML=html;
+  document.getElementById('qSearch').addEventListener('input',function(){
+    searchQ=this.value.trim();
+    document.querySelectorAll('.surah-card').forEach(c=>{
+      c.style.display=(!searchQ||c.querySelector('.surah-name').textContent.includes(searchQ))?'':'none';
     });
   });
 }
 
+async function showSurah(surahNum, scrollToAyah=null){
+  main.innerHTML='<div class="spinner"></div>';
+  _currentAyahs=[];
+  try{
+    const res=await fetch(`https://api.alquran.cloud/v1/surah/${surahNum}`);
+    if(!res.ok) throw new Error();
+    const data=await res.json();
+    const ayahs=data.data.ayahs;
+    const name =data.data.name;
+    _currentAyahs=ayahs;
 
-// ── Show Surah ──
-async function showSurah(surahNum, scrollToAyah = null) {
-  main.innerHTML = '<div class="spinner"></div>';
-  try {
-    const res = await fetch(`https://api.alquran.cloud/v1/surah/${surahNum}`);
-    if (!res.ok) throw new Error();
-    const data = await res.json();
-    const ayahs = data.data.ayahs;
-    const name  = data.data.name;
+    const prevBtn=surahNum>1  ?`<button class="nav-btn" onclick="showSurah(${surahNum-1})">السورة السابقة</button>`:'';
+    const nextBtn=surahNum<114?`<button class="nav-btn" onclick="showSurah(${surahNum+1})">السورة التالية</button>`:'';
 
-    const prevBtn = surahNum > 1   ? `<button class="nav-btn" onclick="showSurah(${surahNum-1})">السورة السابقة</button>` : '';
-    const nextBtn = surahNum < 114 ? `<button class="nav-btn" onclick="showSurah(${surahNum+1})">السورة التالية</button>` : '';
-    const backTarget = 'showSurahList()';
-
-    let html = `
+    let html=`
     <div class="surah-nav">
-      <button class="nav-btn" onclick="${backTarget}">← رجوع</button>
+      <button class="nav-btn" onclick="showSurahList()">← رجوع</button>
       <span class="surah-title-display">${name}</span>
       <div style="display:flex;gap:8px">${prevBtn}${nextBtn}</div>
     </div>
+
+    <div class="surah-audio-row">
+      <button class="surah-full-btn" onclick="playSurahFull(${surahNum})">
+        🎧 استمع للسورة كاملة — مشاري راشد العفاسي
+      </button>
+    </div>
+
     <p style="text-align:center;color:var(--text3);font-size:0.82rem;margin-bottom:24px">
-      📍 موضع قراءتك يُحفظ تلقائياً عند التمرير
+      📍 موضع قراءتك يُحفظ تلقائياً · 🔊 اضغط على زر الاستماع بجانب أي آية
     </p>`;
 
-    if (surahNum !== 1 && surahNum !== 9) {
-      html += `<div style="text-align:center;margin-bottom:28px;">
+    if(surahNum!==1&&surahNum!==9){
+      html+=`<div style="text-align:center;margin-bottom:28px;">
         <div class="hero-ayah" style="display:inline-flex;padding:14px 28px;">
           <span class="ayah-text" style="font-size:1.6rem;">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</span>
         </div>
       </div>`;
     }
-    // Display-only Basmala stripping: strip basmala from first ayah display only
-    function stripBasmalaForDisplay(text) {
-      if (!text) return text;
-      let t = text;
-      // 1) Unicode basmala ligature ﷽ (U+FDFD)
-      t = t.replace(/\uFDFD/g, '');
-      // 2) Fully vocalized forms from the API
-      t = t.replace(/بِسْمِ\s*ٱللَّهِ\s*ٱلرَّحْمَٰنِ\s*ٱلرَّحِيمِ/u, '');
-      t = t.replace(/بِسْمِ\s*اللَّهِ\s*الرَّحْمَنِ\s*الرَّحِيمِ/u, '');
-      t = t.replace(/بِسْمِ\s*ٱللَّهِ\s*ٱلرَّحْمَنِ\s*ٱلرَّحِيمِ/u, '');
-      // 3) Plain unvocalized forms
-      t = t.replace(/بسم\s*الله\s*الرحمن\s*الرحيم/u, '');
-      // 4) Clean up any leading punctuation/space left behind
-      t = t.replace(/^[\s\u0020\u00a0\u200b،؛:.،\-–—()[\]]+/, '').trim();
-      return t || text; // fallback to original if stripping ate everything
+
+    function stripBasmala(t){
+      if(!t) return t;
+      t=t.replace(/\uFDFD/g,'');
+      t=t.replace(/بِسْمِ\s*ٱللَّهِ\s*ٱلرَّحْمَٰنِ\s*ٱلرَّحِيمِ/u,'');
+      t=t.replace(/بِسْمِ\s*اللَّهِ\s*الرَّحْمَنِ\s*الرَّحِيمِ/u,'');
+      t=t.replace(/بِسْمِ\s*ٱللَّهِ\s*ٱلرَّحْمَنِ\s*ٱلرَّحِيمِ/u,'');
+      t=t.replace(/بسم\s*الله\s*الرحمن\s*الرحيم/u,'');
+      t=t.replace(/^[\s\u0020\u00a0\u200b،؛:.،\-–—()[\]]+/,'').trim();
+      return t||arguments[0];
     }
 
-    html += `<div class="ayah-viewer">`;
-    ayahs.forEach(a => {
-      const displayText = (a.numberInSurah === 1 && surahNum !== 1 && surahNum !== 9) ? stripBasmalaForDisplay(a.text) : a.text;
-      html += `<div class="ayah-item" data-ayah="${a.numberInSurah}" id="ayah-${a.numberInSurah}">
-        <span class="ayah-text">${displayText}</span>
-        <span class="ayah-num-badge">${toArabicNum(a.numberInSurah)}</span>
+    html+=`<div class="ayah-viewer">`;
+    ayahs.forEach(a=>{
+      const display=(a.numberInSurah===1&&surahNum!==1&&surahNum!==9)?stripBasmala(a.text):a.text;
+      html+=`<div class="ayah-item" data-ayah="${a.numberInSurah}" id="ayah-${a.numberInSurah}">
+        <span class="ayah-text">${display}</span>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px;">
+          <span class="ayah-num-badge">${toArabicNum(a.numberInSurah)}</span>
+          <button class="ayah-play-btn" data-ayah="${a.numberInSurah}"
+            onclick="playAyah(${surahNum},${a.numberInSurah})">
+            🔊 استمع
+          </button>
+        </div>
       </div>`;
     });
-    html += `</div>`;
+    html+=`</div>`;
 
-    main.innerHTML = html;
-
-    // Setup auto bookmark observer
+    main.innerHTML=html;
     setupAutoBookmark(surahNum);
 
-    // Scroll to saved position
-    if (scrollToAyah) {
-      setTimeout(() => {
-        const el = document.getElementById('ayah-' + scrollToAyah);
-        if (el) {
-          el.scrollIntoView({ behavior:'smooth', block:'center' });
+    if(scrollToAyah){
+      setTimeout(()=>{
+        const el=document.getElementById('ayah-'+scrollToAyah);
+        if(el){
+          el.scrollIntoView({behavior:'smooth',block:'center'});
           el.classList.add('auto-bookmarked');
-          const lbl = document.createElement('span');
-          lbl.className = 'auto-bm-label';
-          lbl.textContent = '🔖 موضعك';
+          const lbl=document.createElement('span');
+          lbl.className='auto-bm-label'; lbl.textContent='🔖 موضعك';
           el.appendChild(lbl);
         }
-      }, 400);
+      },400);
     }
 
-    // Also save on page-hide / visibility change
-    document.addEventListener('visibilitychange', () => {
-      if (document.hidden) {
-        const visible = getFirstVisible();
-        if (visible) saveBookmark(surahNum, parseInt(visible.dataset.ayah));
-      }
+    document.addEventListener('visibilitychange',()=>{
+      if(document.hidden){ const v=_firstVisible(); if(v) saveBookmark(surahNum,parseInt(v.dataset.ayah)); }
     });
-    window.addEventListener('beforeunload', () => {
-      const visible = getFirstVisible();
-      if (visible) saveBookmark(surahNum, parseInt(visible.dataset.ayah));
+    window.addEventListener('beforeunload',()=>{
+      const v=_firstVisible(); if(v) saveBookmark(surahNum,parseInt(v.dataset.ayah));
     });
 
-  } catch(e) {
-    main.innerHTML = `<div style="text-align:center;padding:60px 20px;color:var(--text2);">
+  }catch(e){
+    main.innerHTML=`<div style="text-align:center;padding:60px 20px;color:var(--text2);">
       <p style="font-size:1.1rem;margin-bottom:16px;">⚠️ تعذّر تحميل السورة</p>
       <p style="color:var(--text3);">يرجى التحقق من اتصالك بالإنترنت</p>
       <button class="nav-btn" style="margin-top:20px" onclick="showSurah(${surahNum})">إعادة المحاولة</button>
@@ -315,57 +567,57 @@ async function showSurah(surahNum, scrollToAyah = null) {
   }
 }
 
-function getFirstVisible(){
-  const items = document.querySelectorAll('.ayah-item[data-ayah]');
-  for (const el of items) {
-    const r = el.getBoundingClientRect();
-    if (r.top >= 0 && r.top < window.innerHeight * 0.7) return el;
+function _firstVisible(){
+  for(const el of document.querySelectorAll('.ayah-item[data-ayah]')){
+    const r=el.getBoundingClientRect();
+    if(r.top>=0&&r.top<window.innerHeight*0.7) return el;
   }
   return null;
 }
 
 document.addEventListener('DOMContentLoaded', showSurahList);
 
-// --- Offline download logic (trigger SW to cache all surahs) ---
-const downloadBtn = document.getElementById('downloadQBtn');
+// ════════════════════════════════════════
+//  تنزيل النص بدون نت
+// ════════════════════════════════════════
+const downloadQBtn = document.getElementById('downloadQBtn');
 const downloadStatus = document.getElementById('downloadStatus');
-function setStatus(t){ if(downloadStatus) downloadStatus.textContent = t; }
+function setStatus(t){ if(downloadStatus) downloadStatus.textContent=t; }
 
-async function sendDownloadRequest(){
-  if (!('serviceWorker' in navigator)) return setStatus('خدمة العمل غير متوفرة');
-  const reg = await navigator.serviceWorker.ready;
-  try {
-    // send message to SW to start download
-    if (reg.active) reg.active.postMessage({ type: 'DOWNLOAD_QURAN' });
-    else if (reg.installing) reg.installing.postMessage({ type: 'DOWNLOAD_QURAN' });
-    setStatus('بدء تنزيل السور...');
-    localStorage.setItem('q_download_pending', '1');
-  } catch (e) {
-    setStatus('فشل إرسال الطلب');
-  }
-}
-
-// Listen for progress messages from SW
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.addEventListener('message', e => {
-    const d = e.data || {};
-    if (d.type === 'DOWNLOAD_PROGRESS') {
-      setStatus(`جارٍ تنزيل ${d.done}/${d.total}`);
-    } else if (d.type === 'DOWNLOAD_COMPLETE') {
-      setStatus('اكتمل تنزيل السور. يمكنك الآن قراءة المصحف بدون اتصال.');
-      localStorage.setItem('q_downloaded', '1');
-      localStorage.removeItem('q_download_pending');
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.addEventListener('message', e=>{
+    const d=e.data||{};
+    if(d.type==='DOWNLOAD_PROGRESS') setStatus(`⬇️ تنزيل السور: ${d.done}/${d.total}`);
+    else if(d.type==='DOWNLOAD_COMPLETE'){
+      setStatus('✅ اكتمل تنزيل السور. يمكنك القراءة بدون اتصال.');
+      localStorage.setItem('q_downloaded','1');
+    }
+    else if(d.type==='AUDIO_DOWNLOAD_PROGRESS') setStatus(`🎧 تنزيل التلاوة: ${d.done}/${d.total} سورة`);
+    else if(d.type==='AUDIO_DOWNLOAD_COMPLETE'){
+      setStatus('✅ اكتملت التلاوة. يمكنك الاستماع بدون اتصال.');
+      localStorage.setItem('q_audio_downloaded','1');
     }
   });
 }
 
-if (downloadBtn) downloadBtn.addEventListener('click', () => {
-  const already = localStorage.getItem('q_downloaded');
-  if (already) return setStatus('السور محمّلة فعلاً');
-  // Confirm with user (simple confirm dialog)
-  if (confirm('تنزيل جميع السور للتشغيل دون اتصال قد يستهلك بيانات. متابعة؟')) {
-    sendDownloadRequest();
-  }
+if(downloadQBtn) downloadQBtn.addEventListener('click',async()=>{
+  if(localStorage.getItem('q_downloaded')) return setStatus('✅ السور محمّلة فعلاً');
+  if(!confirm('تنزيل جميع السور للقراءة بدون اتصال؟')) return;
+  const reg=await navigator.serviceWorker.ready;
+  reg.active?.postMessage({type:'DOWNLOAD_QURAN'});
+  setStatus('⬇️ بدء تنزيل السور...');
+});
+
+// ════════════════════════════════════════
+//  تنزيل التلاوة الصوتية
+// ════════════════════════════════════════
+document.getElementById('downloadAudioBtn').addEventListener('click', async()=>{
+  if(localStorage.getItem('q_audio_downloaded')) return setStatus('✅ التلاوة محمّلة فعلاً');
+  if(!confirm('سيتم تنزيل تلاوة مشاري راشد العفاسي للسور كاملة.\nقد يستغرق وقتاً ويستهلك بيانات.\nمتابعة؟')) return;
+  if(!('serviceWorker' in navigator)) return setStatus('خدمة العمل غير متوفرة');
+  const reg=await navigator.serviceWorker.ready;
+  reg.active?.postMessage({type:'DOWNLOAD_AUDIO'});
+  setStatus('🎧 بدء تنزيل التلاوة...');
 });
 </script>
 </body>

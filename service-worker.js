@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rahab-v2';
+const CACHE_NAME = 'rahab-v3';
 const STATIC_FILES = [
   './',
   './index.html',
@@ -13,7 +13,7 @@ const STATIC_FILES = [
   'https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;700;900&family=Scheherazade+New:wght@400;700&display=swap'
 ];
 
-// Install: cache all static files
+// ── Install ──
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
@@ -23,7 +23,7 @@ self.addEventListener('install', event => {
   self.skipWaiting();
 });
 
-// Activate: remove old caches
+// ── Activate ──
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys =>
@@ -33,11 +33,11 @@ self.addEventListener('activate', event => {
   self.clients.claim();
 });
 
-// Fetch: cache-first for static, network-first for API
+// ── Fetch ──
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
 
-  // Quran API — network first, fallback to cache
+  // Quran text API — network first, fallback cache
   if (url.hostname === 'api.alquran.cloud') {
     event.respondWith(
       fetch(event.request)
@@ -47,6 +47,24 @@ self.addEventListener('fetch', event => {
           return res;
         })
         .catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
+  // Audio APIs — cache first (if already downloaded), then network
+  if (url.hostname === 'everyayah.com' || url.hostname === 'download.quranicaudio.com') {
+    event.respondWith(
+      caches.match(event.request).then(cached => {
+        if (cached) return cached;
+        return fetch(event.request).then(res => {
+          // cache audio responses automatically when fetched
+          if (res && res.ok) {
+            const clone = res.clone();
+            caches.open(CACHE_NAME).then(c => c.put(event.request, clone));
+          }
+          return res;
+        });
+      }).catch(() => caches.match(event.request))
     );
     return;
   }
@@ -63,7 +81,7 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // Everything else — cache first, then network
+  // Everything else — cache first then network
   event.respondWith(
     caches.match(event.request)
       .then(r => r || fetch(event.request))
@@ -71,7 +89,7 @@ self.addEventListener('fetch', event => {
   );
 });
 
-// Notification click
+// ── Notification click ──
 self.addEventListener('notificationclick', event => {
   event.notification.close();
   event.waitUntil(
@@ -83,10 +101,12 @@ self.addEventListener('notificationclick', event => {
   );
 });
 
-// Listen for messages from the page (e.g., request to download Quran for offline)
+// ── Messages from page ──
 self.addEventListener('message', event => {
   const data = event.data || {};
-  if (data && data.type === 'DOWNLOAD_QURAN') {
+
+  // ── تنزيل نص السور ──
+  if (data.type === 'DOWNLOAD_QURAN') {
     (async () => {
       const total = 114;
       const cache = await caches.open(CACHE_NAME);
@@ -95,15 +115,47 @@ self.addEventListener('message', event => {
           const reqUrl = `https://api.alquran.cloud/v1/surah/${i}`;
           const res = await fetch(reqUrl);
           if (res && res.ok) await cache.put(reqUrl, res.clone());
-        } catch (e) {
-          // ignore individual failures, continue
-        }
-        // broadcast progress to all clients
+        } catch (e) { /* تجاهل الأخطاء الفردية */ }
         const clientsList = await self.clients.matchAll({ includeUncontrolled: true });
         clientsList.forEach(c => c.postMessage({ type: 'DOWNLOAD_PROGRESS', done: i, total }));
       }
       const clientsList = await self.clients.matchAll({ includeUncontrolled: true });
       clientsList.forEach(c => c.postMessage({ type: 'DOWNLOAD_COMPLETE' }));
+    })();
+  }
+
+  // ── تنزيل التلاوة الصوتية — حسام الدين عبادي ──
+  if (data.type === 'DOWNLOAD_AUDIO') {
+    (async () => {
+      const total = 114;
+      const cache = await caches.open(CACHE_NAME);
+      let done = 0;
+
+      const broadcast = async (msg) => {
+        const list = await self.clients.matchAll({ includeUncontrolled: true });
+        list.forEach(c => c.postMessage(msg));
+      };
+
+      for (let i = 1; i <= total; i++) {
+        // نزّل ملف السورة كاملة (quranicaudio)
+        const surahUrl = `https://download.quranicaudio.com/quran/mishaari_raashid_al_3afaasee/${String(i).padStart(3,'0')}.mp3`;
+        try {
+          // تحقق إذا كان مخزناً
+          const existing = await cache.match(surahUrl);
+          if (!existing) {
+            const res = await fetch(surahUrl);
+            if (res && res.ok) await cache.put(surahUrl, res.clone());
+          }
+        } catch(e) { /* تجاهل */ }
+
+        done++;
+        await broadcast({ type: 'AUDIO_DOWNLOAD_PROGRESS', done, total });
+
+        // استراحة قصيرة لتجنب الضغط على الشبكة
+        await new Promise(r => setTimeout(r, 25));
+      }
+
+      await broadcast({ type: 'AUDIO_DOWNLOAD_COMPLETE' });
     })();
   }
 });
